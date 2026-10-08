@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+*.pem
+.DS_Store
+.idea/
+*.sublime-workspace*
+Login Info.txt
+oldPasswords*.txt
+usernames.txt
+*SymptomPatients.txt
+fileName.txt
+ListText.txt
+*.log
+
+# Excluded from public release; local copies retained
+/docs/q-table-explanation.png
