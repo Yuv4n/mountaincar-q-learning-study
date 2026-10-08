@@ -8,4 +8,4 @@ Original timezone and exact coding times cannot be established. Author timestamp
 
 ## File evidence
 
-- `src/train.py`: 2021-08-28; hash-matched RAR last-saved date. Archive: `Coding/Q learning/Reinfrocment Learning (Q learning) Basic Model mk01 - Copy.py`.
+- `train.py`: 2021-08-28; hash-matched RAR last-saved date. Archive: `Coding/Q learning/Reinfrocment Learning (Q learning) Basic Model mk01 - Copy.py`.
