@@ -1,0 +1,88 @@
+{
+  "description": "Final experiment. Hyperparameters chosen on validation seeds 100-102 / 5000-5099 (see docs/tuning.md); this file was committed before the final run.",
+  "config": {
+    "description": "Final experiment. Hyperparameters chosen on validation seeds 100-102 / 5000-5099 (see docs/tuning.md); this file was committed before the final run.",
+    "train_seeds": {
+      "start": 0,
+      "count": 5
+    },
+    "eval_seeds": {
+      "start": 10000,
+      "count": 200
+    },
+    "random_policy_seed": 0,
+    "hyperparameters": {
+      "n_bins": 40,
+      "episodes": 25000,
+      "learning_rate": 0.2,
+      "discount": 0.99,
+      "epsilon_start": 1.0,
+      "epsilon_end": 0.0,
+      "epsilon_decay_fraction": 0.5,
+      "q_init_low": -2.0,
+      "q_init_high": 0.0,
+      "curve_eval_every": 500,
+      "curve_eval_episodes": 20,
+      "curve_eval_seed_start": 20000
+    }
+  },
+  "evaluation_seeds": {
+    "start": 10000,
+    "end": 10199,
+    "episodes": 200
+  },
+  "greedy_per_seed": [
+    {
+      "train_seed": 0,
+      "success_rate": 1.0,
+      "mean_return": -127.75,
+      "mean_steps": 127.75,
+      "train_seconds": 58.9
+    },
+    {
+      "train_seed": 1,
+      "success_rate": 1.0,
+      "mean_return": -128.59,
+      "mean_steps": 128.59,
+      "train_seconds": 60.2
+    },
+    {
+      "train_seed": 2,
+      "success_rate": 1.0,
+      "mean_return": -135.025,
+      "mean_steps": 135.025,
+      "train_seconds": 60.8
+    },
+    {
+      "train_seed": 3,
+      "success_rate": 0.96,
+      "mean_return": -120.505,
+      "mean_steps": 120.505,
+      "train_seconds": 59.1
+    },
+    {
+      "train_seed": 4,
+      "success_rate": 1.0,
+      "mean_return": -119.145,
+      "mean_steps": 119.145,
+      "train_seconds": 58.2
+    }
+  ],
+  "greedy_across_seeds": {
+    "success_rate": {
+      "mean": 0.992,
+      "std": 0.017888543819998333
+    },
+    "mean_return": {
+      "mean": -126.203,
+      "std": 6.484620844737189
+    }
+  },
+  "random_baseline": {
+    "episodes": 200,
+    "success_rate": 0.0,
+    "mean_return": -200.0,
+    "mean_steps": 200.0
+  },
+  "std_note": "sample standard deviation (ddof=1) across training seeds"
+}
