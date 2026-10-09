@@ -110,12 +110,15 @@ def main(argv: Optional[List[str]] = None) -> None:
 
     random_eval = ql.evaluate_random(eval_seeds, policy_seed=spec.get("random_policy_seed", 0))
     heuristic_eval = ql.evaluate_heuristic(eval_seeds)
-    per_seed, histories = [], []
+    per_seed, histories, episodes_out = [], [], {}
     for seed, q, hist, greedy, elapsed in outputs:
         np.save(os.path.join(args.out, f"q_table_seed{seed}.npy"), q)
+        lo, hi = ql.wilson_interval(int(sum(greedy["successes"])), greedy["episodes"])
         per_seed.append({"train_seed": seed, "success_rate": greedy["success_rate"],
-                         "mean_return": greedy["mean_return"], "mean_steps": greedy["mean_steps"],
-                         "train_seconds": round(elapsed, 1)})
+                         "success_rate_ci95_wilson": [lo, hi],
+                         "mean_return": greedy["mean_return"], "mean_steps": greedy["mean_steps"]})
+        episodes_out[str(seed)] = {"eval_seeds": eval_seeds, "returns": greedy["returns"],
+                                   "successes": greedy["successes"]}
         histories.append(hist)
         print(f"seed {seed}: success {greedy['success_rate']:.2f}  mean return {greedy['mean_return']:.1f}  ({elapsed:.0f}s)")
 
@@ -129,10 +132,13 @@ def main(argv: Optional[List[str]] = None) -> None:
         "random_baseline": {k: v for k, v in random_eval.items() if k not in ("returns", "successes")},
         "velocity_heuristic_baseline": {k: v for k, v in heuristic_eval.items() if k not in ("returns", "successes")},
         "velocity_heuristic_description": "push right when velocity >= 0, left otherwise; no learning",
-        "std_note": "sample standard deviation (ddof=1) across training seeds",
+        "std_note": "sample standard deviation (ddof=1) across training seeds; "
+                    "per-seed success intervals are 95% Wilson intervals over the evaluation episodes",
     }
     with open(os.path.join(args.out, "results.json"), "w") as f:
         json.dump(results, f, indent=2)
+    with open(os.path.join(args.out, "evaluation_episodes.json"), "w") as f:
+        json.dump(episodes_out, f)
     np.savez_compressed(os.path.join(args.out, "history.npz"), **{
         f"seed{s}_{k}": v for (s, _, h, _, _), _ in zip(outputs, histories) for k, v in h.items()})
     if not args.no_plot:

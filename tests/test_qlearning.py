@@ -140,3 +140,12 @@ def test_velocity_heuristic_reaches_goal_and_beats_random():
     random_policy = ql.evaluate_random(seeds)
     assert heuristic["success_rate"] == 1.0
     assert heuristic["mean_return"] > random_policy["mean_return"]
+
+
+def test_wilson_interval():
+    lo, hi = ql.wilson_interval(100, 100)
+    assert hi == pytest.approx(1.0) and 0.96 < lo < 0.97
+    lo, hi = ql.wilson_interval(0, 200)
+    assert lo == 0.0 and 0.0 < hi < 0.03
+    lo, hi = ql.wilson_interval(50, 100)
+    assert lo < 0.5 < hi
