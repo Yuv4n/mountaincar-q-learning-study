@@ -21,6 +21,8 @@
       "epsilon_decay_fraction": 0.5,
       "q_init_low": -2.0,
       "q_init_high": 0.0,
+      "legacy_bin_width": false,
+      "ignore_exploration": false,
       "curve_eval_every": 500,
       "curve_eval_episodes": 20,
       "curve_eval_seed_start": 20000
@@ -35,37 +37,52 @@
     {
       "train_seed": 0,
       "success_rate": 1.0,
+      "success_rate_ci95_wilson": [
+        0.9811539940816791,
+        1.0
+      ],
       "mean_return": -127.75,
-      "mean_steps": 127.75,
-      "train_seconds": 58.9
+      "mean_steps": 127.75
     },
     {
       "train_seed": 1,
       "success_rate": 1.0,
+      "success_rate_ci95_wilson": [
+        0.9811539940816791,
+        1.0
+      ],
       "mean_return": -128.59,
-      "mean_steps": 128.59,
-      "train_seconds": 60.2
+      "mean_steps": 128.59
     },
     {
       "train_seed": 2,
       "success_rate": 1.0,
+      "success_rate_ci95_wilson": [
+        0.9811539940816791,
+        1.0
+      ],
       "mean_return": -135.025,
-      "mean_steps": 135.025,
-      "train_seconds": 60.8
+      "mean_steps": 135.025
     },
     {
       "train_seed": 3,
       "success_rate": 0.96,
+      "success_rate_ci95_wilson": [
+        0.9230670617058012,
+        0.9795946128493436
+      ],
       "mean_return": -120.505,
-      "mean_steps": 120.505,
-      "train_seconds": 59.1
+      "mean_steps": 120.505
     },
     {
       "train_seed": 4,
       "success_rate": 1.0,
+      "success_rate_ci95_wilson": [
+        0.9811539940816791,
+        1.0
+      ],
       "mean_return": -119.145,
-      "mean_steps": 119.145,
-      "train_seconds": 58.2
+      "mean_steps": 119.145
     }
   ],
   "greedy_across_seeds": {
@@ -84,5 +101,12 @@
     "mean_return": -200.0,
     "mean_steps": 200.0
   },
-  "std_note": "sample standard deviation (ddof=1) across training seeds"
+  "velocity_heuristic_baseline": {
+    "episodes": 200,
+    "success_rate": 1.0,
+    "mean_return": -119.465,
+    "mean_steps": 119.465
+  },
+  "velocity_heuristic_description": "push right when velocity >= 0, left otherwise; no learning",
+  "std_note": "sample standard deviation (ddof=1) across training seeds; per-seed success intervals are 95% Wilson intervals over the evaluation episodes"
 }
