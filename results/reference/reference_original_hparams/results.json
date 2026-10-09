@@ -1,0 +1,112 @@
+{
+  "description": "Corrected code with the original script's hyperparameters (0.1, 0.95, 20 bins). Same seeds as the final run.",
+  "config": {
+    "description": "Corrected code with the original script's hyperparameters (0.1, 0.95, 20 bins). Same seeds as the final run.",
+    "train_seeds": {
+      "start": 0,
+      "count": 5
+    },
+    "eval_seeds": {
+      "start": 10000,
+      "count": 200
+    },
+    "random_policy_seed": 0,
+    "hyperparameters": {
+      "n_bins": 20,
+      "episodes": 25000,
+      "learning_rate": 0.1,
+      "discount": 0.95,
+      "epsilon_start": 1.0,
+      "epsilon_end": 0.0,
+      "epsilon_decay_fraction": 0.5,
+      "q_init_low": -2.0,
+      "q_init_high": 0.0,
+      "legacy_bin_width": false,
+      "ignore_exploration": false,
+      "curve_eval_every": 0,
+      "curve_eval_episodes": 20,
+      "curve_eval_seed_start": 20000
+    }
+  },
+  "evaluation_seeds": {
+    "start": 10000,
+    "end": 10199,
+    "episodes": 200
+  },
+  "greedy_per_seed": [
+    {
+      "train_seed": 0,
+      "success_rate": 1.0,
+      "success_rate_ci95_wilson": [
+        0.9811539940816791,
+        1.0
+      ],
+      "mean_return": -126.85,
+      "mean_steps": 126.85
+    },
+    {
+      "train_seed": 1,
+      "success_rate": 1.0,
+      "success_rate_ci95_wilson": [
+        0.9811539940816791,
+        1.0
+      ],
+      "mean_return": -140.815,
+      "mean_steps": 140.815
+    },
+    {
+      "train_seed": 2,
+      "success_rate": 1.0,
+      "success_rate_ci95_wilson": [
+        0.9811539940816791,
+        1.0
+      ],
+      "mean_return": -127.63,
+      "mean_steps": 127.63
+    },
+    {
+      "train_seed": 3,
+      "success_rate": 1.0,
+      "success_rate_ci95_wilson": [
+        0.9811539940816791,
+        1.0
+      ],
+      "mean_return": -141.45,
+      "mean_steps": 141.45
+    },
+    {
+      "train_seed": 4,
+      "success_rate": 1.0,
+      "success_rate_ci95_wilson": [
+        0.9811539940816791,
+        1.0
+      ],
+      "mean_return": -138.11,
+      "mean_steps": 138.11
+    }
+  ],
+  "greedy_across_seeds": {
+    "success_rate": {
+      "mean": 1.0,
+      "std": 0.0
+    },
+    "mean_return": {
+      "mean": -134.97099999999998,
+      "std": 7.173284115382578
+    }
+  },
+  "random_baseline": {
+    "episodes": 200,
+    "success_rate": 0.0,
+    "mean_return": -200.0,
+    "mean_steps": 200.0
+  },
+  "velocity_heuristic_baseline": {
+    "episodes": 200,
+    "success_rate": 1.0,
+    "mean_return": -119.465,
+    "mean_steps": 119.465
+  },
+  "velocity_heuristic_description": "push right when velocity >= 0, left otherwise; no learning",
+  "std_note": "sample standard deviation (ddof=1) across training seeds; per-seed success intervals are 95% Wilson intervals over the evaluation episodes"
+}

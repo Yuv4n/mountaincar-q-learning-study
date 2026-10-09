@@ -1,0 +1,21 @@
+{
+  "description": "Original hyperparameters with both original defects restored. Terminal handling still follows the corrected code. Same seeds as the final run.",
+  "train_seeds": {
+    "start": 0,
+    "count": 5
+  },
+  "eval_seeds": {
+    "start": 10000,
+    "count": 200
+  },
+  "random_policy_seed": 0,
+  "hyperparameters": {
+    "n_bins": 20,
+    "episodes": 25000,
+    "learning_rate": 0.1,
+    "discount": 0.95,
+    "curve_eval_every": 0,
+    "legacy_bin_width": true,
+    "ignore_exploration": true
+  }
+}
