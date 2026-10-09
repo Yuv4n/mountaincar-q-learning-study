@@ -113,3 +113,22 @@ def test_truncation_is_reported_distinctly_from_termination():
     result = ql.evaluate(np.zeros((N, N, 3)), N, [0])
     assert result["successes"] == [False]
     assert result["mean_steps"] == 200
+
+
+SMALL = ql.Config(episodes=60, curve_eval_every=30, curve_eval_episodes=3)
+
+
+def test_same_seed_gives_identical_q_table():
+    q1, _ = ql.train(SMALL, seed=3)
+    q2, _ = ql.train(SMALL, seed=3)
+    q3, _ = ql.train(SMALL, seed=4)
+    np.testing.assert_array_equal(q1, q2)
+    assert not np.array_equal(q1, q3)
+
+
+def test_rendering_does_not_change_training(monkeypatch):
+    pytest.importorskip("pygame")
+    monkeypatch.setenv("SDL_VIDEODRIVER", "dummy")
+    headless, _ = ql.train(SMALL, seed=5)
+    rendered, _ = ql.train(SMALL, seed=5, render_every=20)
+    np.testing.assert_array_equal(headless, rendered)

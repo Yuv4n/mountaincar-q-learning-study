@@ -155,13 +155,20 @@ def train(cfg: Config, seed: int, render_every: int = 0,
 
     for episode in range(cfg.episodes):
         epsilon = epsilon_at(episode, cfg)
-        active = render_env if render_env is not None and episode % render_every == 0 else env
-        obs, _ = active.reset(seed=seed if episode == 0 else None)
+        # Render episodes are drawn from a second environment that mirrors the
+        # training environment's state, so rendering does not change the run.
+        mirror = render_env is not None and episode % render_every == 0
+        obs, _ = env.reset(seed=seed if episode == 0 else None)
+        if mirror:
+            render_env.reset()
         state = discretize(obs, low, width, cfg.n_bins)
         total, terminated, truncated = 0.0, False, False
         while not (terminated or truncated):
             action = select_action(q[state], epsilon, rng)
-            obs, reward, terminated, truncated, _ = active.step(action)
+            obs, reward, terminated, truncated, _ = env.step(action)
+            if mirror:
+                render_env.unwrapped.state = env.unwrapped.state
+                render_env.render()
             next_state = discretize(obs, low, width, cfg.n_bins)
             q_update(q, state, action, reward, next_state, terminated,
                      cfg.learning_rate, cfg.discount)
