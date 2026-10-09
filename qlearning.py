@@ -27,6 +27,10 @@ class Config:
     epsilon_decay_fraction: float = 0.5
     q_init_low: float = -2.0
     q_init_high: float = 0.0
+    # Ablation switches that reproduce the two defects of the original 2021 script.
+    # Both default to off and exist only so their effect can be measured.
+    legacy_bin_width: bool = False  # bin width = high - low / n_bins instead of (high - low) / n_bins
+    ignore_exploration: bool = False  # always take the greedy action, discarding the epsilon-greedy choice
     # Greedy-policy checkpoints used for the learning curve.
     curve_eval_every: int = 500
     curve_eval_episodes: int = 20
@@ -36,8 +40,13 @@ class Config:
         return asdict(self)
 
 
-def bin_widths(low: np.ndarray, high: np.ndarray, n_bins: int) -> np.ndarray:
-    """Width of one bin in each observation dimension."""
+def bin_widths(low: np.ndarray, high: np.ndarray, n_bins: int, legacy: bool = False) -> np.ndarray:
+    """Width of one bin in each observation dimension.
+
+    legacy=True reproduces the original operator-precedence error, for ablation only.
+    """
+    if legacy:
+        return np.asarray(high, dtype=np.float64) - np.asarray(low, dtype=np.float64) / n_bins
     return (np.asarray(high, dtype=np.float64) - np.asarray(low, dtype=np.float64)) / n_bins
 
 
@@ -78,16 +87,16 @@ def init_q_table(cfg: Config, n_actions: int, rng: np.random.Generator) -> np.nd
     return rng.uniform(cfg.q_init_low, cfg.q_init_high, size=shape)
 
 
-def _grid(env, n_bins):
+def _grid(env, n_bins, legacy=False):
     low = env.observation_space.low.astype(np.float64)
     high = env.observation_space.high.astype(np.float64)
-    return low, bin_widths(low, high, n_bins)
+    return low, bin_widths(low, high, n_bins, legacy)
 
 
-def evaluate(q, n_bins: int, seeds: List[int]) -> Dict:
+def evaluate(q, n_bins: int, seeds: List[int], legacy_bin_width: bool = False) -> Dict:
     """Run the frozen greedy policy once per seed. The Q-table is never modified."""
     env = gym.make(ENV_ID)
-    low, width = _grid(env, n_bins)
+    low, width = _grid(env, n_bins, legacy_bin_width)
     returns, steps, successes = [], [], []
     for seed in seeds:
         obs, _ = env.reset(seed=int(seed))
@@ -173,7 +182,7 @@ def train(cfg: Config, seed: int, render_every: int = 0,
     """
     rng = np.random.default_rng(seed)
     env = gym.make(ENV_ID)
-    low, width = _grid(env, cfg.n_bins)
+    low, width = _grid(env, cfg.n_bins, cfg.legacy_bin_width)
     q = init_q_table(cfg, env.action_space.n, rng)
     render_env = gym.make(ENV_ID, render_mode="human") if render_every else None
 
@@ -194,6 +203,8 @@ def train(cfg: Config, seed: int, render_every: int = 0,
         total, terminated, truncated = 0.0, False, False
         while not (terminated or truncated):
             action = select_action(q[state], epsilon, rng)
+            if cfg.ignore_exploration:
+                action = int(np.argmax(q[state]))
             obs, reward, terminated, truncated, _ = env.step(action)
             if mirror:
                 render_env.unwrapped.state = env.unwrapped.state
@@ -207,7 +218,7 @@ def train(cfg: Config, seed: int, render_every: int = 0,
         train_success[episode] = terminated
 
         if cfg.curve_eval_every and (episode + 1) % cfg.curve_eval_every == 0:
-            ev = evaluate(q, cfg.n_bins, curve_seeds)
+            ev = evaluate(q, cfg.n_bins, curve_seeds, cfg.legacy_bin_width)
             ckpt_episode.append(episode + 1)
             ckpt_success.append(ev["success_rate"])
             ckpt_return.append(ev["mean_return"])

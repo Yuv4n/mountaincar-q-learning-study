@@ -35,7 +35,7 @@ def _run_seed(args):
     t0 = time.time()
     q, hist = ql.train(cfg, seed)
     eval_seeds = seed_list(spec, "eval_seeds")
-    greedy = ql.evaluate(q, cfg.n_bins, eval_seeds)
+    greedy = ql.evaluate(q, cfg.n_bins, eval_seeds, cfg.legacy_bin_width)
     return seed, q, hist, greedy, time.time() - t0
 
 

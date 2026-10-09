@@ -149,3 +149,21 @@ def test_wilson_interval():
     assert lo == 0.0 and 0.0 < hi < 0.03
     lo, hi = ql.wilson_interval(50, 100)
     assert lo < 0.5 < hi
+
+
+def test_legacy_bin_width_reproduces_precedence_error():
+    np.testing.assert_allclose(ql.bin_widths(LOW, HIGH, N, legacy=True), [0.66, 0.0735])
+    # Only a few cells are reachable with the legacy widths.
+    pos = np.linspace(LOW[0], HIGH[0], 1000)
+    vel = np.linspace(LOW[1], HIGH[1], 1000)
+    legacy = ql.bin_widths(LOW, HIGH, N, legacy=True)
+    assert {ql.discretize([p, 0.0], LOW, legacy, N)[0] for p in pos} == {0, 1, 2}
+    assert {ql.discretize([0.0, v], LOW, legacy, N)[1] for v in vel} == {0, 1}
+
+
+def test_ignore_exploration_matches_a_fully_greedy_run():
+    forced = ql.Config(episodes=40, curve_eval_every=0, epsilon_start=1.0, ignore_exploration=True)
+    greedy = ql.Config(episodes=40, curve_eval_every=0, epsilon_start=0.0, ignore_exploration=False)
+    q1, _ = ql.train(forced, seed=1)
+    q2, _ = ql.train(greedy, seed=1)
+    np.testing.assert_array_equal(q1, q2)
