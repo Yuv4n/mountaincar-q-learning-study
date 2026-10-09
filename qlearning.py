@@ -123,6 +123,24 @@ def evaluate_random(seeds: List[int], policy_seed: int = 0) -> Dict:
     return _summary(returns, steps, successes)
 
 
+def evaluate_heuristic(seeds: List[int]) -> Dict:
+    """Hand-coded baseline: push in the direction of the current velocity (right when at rest)."""
+    env = gym.make(ENV_ID)
+    returns, steps, successes = [], [], []
+    for seed in seeds:
+        obs, _ = env.reset(seed=int(seed))
+        total, n, terminated, truncated = 0.0, 0, False, False
+        while not (terminated or truncated):
+            obs, reward, terminated, truncated, _ = env.step(2 if obs[1] >= 0 else 0)
+            total += reward
+            n += 1
+        returns.append(total)
+        steps.append(n)
+        successes.append(bool(terminated))
+    env.close()
+    return _summary(returns, steps, successes)
+
+
 def _summary(returns, steps, successes) -> Dict:
     return {
         "episodes": len(returns),

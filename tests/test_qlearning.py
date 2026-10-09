@@ -132,3 +132,11 @@ def test_rendering_does_not_change_training(monkeypatch):
     headless, _ = ql.train(SMALL, seed=5)
     rendered, _ = ql.train(SMALL, seed=5, render_every=20)
     np.testing.assert_array_equal(headless, rendered)
+
+
+def test_velocity_heuristic_reaches_goal_and_beats_random():
+    seeds = [1, 2, 3]
+    heuristic = ql.evaluate_heuristic(seeds)
+    random_policy = ql.evaluate_random(seeds)
+    assert heuristic["success_rate"] == 1.0
+    assert heuristic["mean_return"] > random_policy["mean_return"]

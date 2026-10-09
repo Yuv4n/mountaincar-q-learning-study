@@ -109,6 +109,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         outputs = list(pool.map(_run_seed, [(spec, s) for s in train_seeds]))
 
     random_eval = ql.evaluate_random(eval_seeds, policy_seed=spec.get("random_policy_seed", 0))
+    heuristic_eval = ql.evaluate_heuristic(eval_seeds)
     per_seed, histories = [], []
     for seed, q, hist, greedy, elapsed in outputs:
         np.save(os.path.join(args.out, f"q_table_seed{seed}.npy"), q)
@@ -126,6 +127,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         "greedy_across_seeds": {"success_rate": summarise(per_seed, "success_rate"),
                                 "mean_return": summarise(per_seed, "mean_return")},
         "random_baseline": {k: v for k, v in random_eval.items() if k not in ("returns", "successes")},
+        "velocity_heuristic_baseline": {k: v for k, v in heuristic_eval.items() if k not in ("returns", "successes")},
+        "velocity_heuristic_description": "push right when velocity >= 0, left otherwise; no learning",
         "std_note": "sample standard deviation (ddof=1) across training seeds",
     }
     with open(os.path.join(args.out, "results.json"), "w") as f:
@@ -138,6 +141,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     print(f"greedy across seeds: success {g['success_rate']['mean']:.3f} +/- {g['success_rate']['std']:.3f}, "
           f"return {g['mean_return']['mean']:.1f} +/- {g['mean_return']['std']:.1f}")
     print(f"random baseline: success {random_eval['success_rate']:.3f}, return {random_eval['mean_return']:.1f}")
+    print(f"velocity heuristic: success {heuristic_eval['success_rate']:.3f}, return {heuristic_eval['mean_return']:.1f}")
 
 
 if __name__ == "__main__":
