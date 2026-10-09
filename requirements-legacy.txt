@@ -1,0 +1,5 @@
+# Legacy environment for scripts/run_original_2021.py (Python 3.9, macOS).
+# The 2021 script needs the old Gym API and np.int, which NumPy 1.24 removed.
+gym==0.25.2
+numpy==1.23.5
+pygame==2.6.1
