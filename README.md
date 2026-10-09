@@ -70,6 +70,14 @@ Training seed 0 from `train.py` with its default arguments produced a Q-table id
 python experiment.py --config configs/reference_original_hparams.json --out results/reference/reference_original_hparams --no-plot
 ```
 
+To rerun the unmodified 2021 script under legacy Gym, use a separate Python 3.9 environment:
+
+```sh
+python3 -m venv .venv-legacy
+.venv-legacy/bin/pip install -r requirements-legacy.txt
+SDL_VIDEODRIVER=dummy .venv-legacy/bin/python scripts/run_original_2021.py --seed 0 --out results/legacy/seed0.json
+```
+
 `train.py` evaluates on seeds 50000 and up by default so exploratory runs stay clear of the reported evaluation seeds (10000 to 10199).
 
 ## Limits
