@@ -1,5 +1,7 @@
 # MountainCar Q-learning
 
+[![tests](https://github.com/Yuv4n/mountaincar-q-learning-study/actions/workflows/tests.yml/badge.svg)](https://github.com/Yuv4n/mountaincar-q-learning-study/actions/workflows/tests.yml)
+
 Tabular Q-learning on Gymnasium's MountainCar-v0. The car starts in a valley, the engine is too weak to climb the right-hand hill directly, and each step costs -1 until the flag is reached or the 200-step limit ends the episode. The agent has to learn to rock back and forth to build momentum.
 
 The observation (position and velocity) is continuous, so it is binned into a 40 x 40 grid with one Q-value per action in each cell. This started as a 2021 script, and this version rewrites it so that it can be tested and measured.
