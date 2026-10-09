@@ -1,0 +1,16 @@
+{
+  "seed": 0,
+  "gym": "0.25.2",
+  "numpy": "1.23.5",
+  "training_episodes_reaching_goal": 0,
+  "first_goal_episode": null,
+  "greedy_eval": {
+    "seeds": [
+      10000,
+      10199
+    ],
+    "episodes": 200,
+    "success_rate": 0.0,
+    "mean_return": -200.0
+  }
+}
