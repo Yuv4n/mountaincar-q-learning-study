@@ -1,0 +1,20 @@
+{
+  "description": "Final experiment. Hyperparameters chosen on validation seeds 100-102 / 5000-5099 (see docs/tuning.md); this file was committed before the final run.",
+  "train_seeds": {"start": 0, "count": 5},
+  "eval_seeds": {"start": 10000, "count": 200},
+  "random_policy_seed": 0,
+  "hyperparameters": {
+    "n_bins": 40,
+    "episodes": 25000,
+    "learning_rate": 0.2,
+    "discount": 0.99,
+    "epsilon_start": 1.0,
+    "epsilon_end": 0.0,
+    "epsilon_decay_fraction": 0.5,
+    "q_init_low": -2.0,
+    "q_init_high": 0.0,
+    "curve_eval_every": 500,
+    "curve_eval_episodes": 20,
+    "curve_eval_seed_start": 20000
+  }
+}

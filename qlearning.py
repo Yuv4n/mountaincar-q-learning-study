@@ -17,10 +17,10 @@ ENV_ID = "MountainCar-v0"
 
 @dataclass
 class Config:
-    n_bins: int = 20
+    n_bins: int = 40
     episodes: int = 25000
-    learning_rate: float = 0.1
-    discount: float = 0.95
+    learning_rate: float = 0.2
+    discount: float = 0.99
     epsilon_start: float = 1.0
     epsilon_end: float = 0.0
     # Epsilon falls linearly to epsilon_end over this fraction of the episodes.
