@@ -42,7 +42,7 @@ The original script and what was checked in it are described in [docs/notes.md](
 
 ## Setup and reproduction
 
-Tested locally with Python 3.9.6 and 3.12.15 on macOS, with the pinned versions in `requirements.txt`. On both, the test suite passes. Training seed 0 on Python 3.12 gave a Q-table identical to the one saved from the Python 3.9 run. The GitHub Actions workflow in `.github/workflows/tests.yml` runs the tests on Python 3.9 and 3.12 on Linux.
+Tested locally with Python 3.9.6 and 3.12.15 on macOS, with the pinned versions in `requirements.txt`. On both, the test suite passes. Training seed 0 on Python 3.12 gave a Q-table identical to the one saved from the Python 3.9 run.
 
 ```sh
 python3 -m venv .venv
@@ -82,6 +82,6 @@ SDL_VIDEODRIVER=dummy .venv-legacy/bin/python scripts/run_original_2021.py --see
 
 ## Limits
 
-This is one small, discrete-grid method on one environment, and the final comparison uses five training seeds. Hyperparameter tuning used three seeds and eight settings, so the chosen setting is not shown to be clearly better than the others. The Linux workflow has not run yet because it has not been pushed.
+This is one small, discrete-grid method on one environment, and the final comparison uses five training seeds. Hyperparameter tuning used three seeds and eight settings, so the chosen setting is not shown to be clearly better than the others.
 
 Code and results are released under the MIT licence.
