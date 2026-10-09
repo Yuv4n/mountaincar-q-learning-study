@@ -65,5 +65,3 @@ Training seed 0 from `train.py` with its default arguments produced a Q-table id
 ## Limits
 
 This is one small, discrete-grid method on one environment, and the final comparison uses five training seeds. Hyperparameter tuning used three seeds and eight settings, so the chosen setting is not shown to be clearly better than the others. The one failure case in the table, seed 3 at 96%, was not investigated further. Rendering was only checked with a dummy video driver, not a visible window.
-
-The original tutorial or reference this script was based on was not recorded, so none can be credited here.
