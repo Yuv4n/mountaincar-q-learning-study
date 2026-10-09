@@ -42,7 +42,7 @@ The original script and what was checked in it are described in [docs/notes.md](
 
 ## Setup and reproduction
 
-Tested locally with Python 3.9.6 on macOS, with the pinned versions in `requirements.txt`. The GitHub Actions workflow in `.github/workflows/tests.yml` runs the tests on Python 3.9 and 3.12.
+Tested locally with Python 3.9.6 and 3.12.15 on macOS, with the pinned versions in `requirements.txt`. On both, the test suite passes. Training seed 0 on Python 3.12 gave a Q-table identical to the one saved from the Python 3.9 run. The GitHub Actions workflow in `.github/workflows/tests.yml` runs the tests on Python 3.9 and 3.12 on Linux.
 
 ```sh
 python3 -m venv .venv
@@ -74,6 +74,6 @@ python experiment.py --config configs/reference_original_hparams.json --out resu
 
 ## Limits
 
-This is one small, discrete-grid method on one environment, and the final comparison uses five training seeds. Hyperparameter tuning used three seeds and eight settings, so the chosen setting is not shown to be clearly better than the others. Rendering was only checked with a dummy video driver, not a visible window, and the Python 3.12 test run has not been executed yet.
+This is one small, discrete-grid method on one environment, and the final comparison uses five training seeds. Hyperparameter tuning used three seeds and eight settings, so the chosen setting is not shown to be clearly better than the others. Rendering was only checked with a dummy video driver, not a visible window, and the Linux workflow has not run yet because the repository was last pushed before it existed.
 
 Code and results are released under the MIT licence.
