@@ -1,31 +1,17 @@
-# Technical notes
+# Notes on the original script and the rewrite
 
-The bin width is written as `high - low / bins`; it should be `(high - low) / bins`. The state indices are not clipped at the upper boundary. Epsilon-greedy action selection is followed by unconditional `argmax`, so the intended exploration is lost.
+The 2021 version of `train.py` was reviewed against the current code before it was replaced. Each item below was checked directly.
 
-Successful terminal transitions set the Q-value to zero. Unsuccessful terminal transitions are not updated. Time limits and termination are not distinguished.
+- Exploration: the epsilon-greedy branch chose an action and the next line overwrote it with `argmax`, so the agent never explored. Confirmed in the source.
+- Bin width: `high - low / bins` divides only `low` by the bin count. For MountainCar this gives widths of 0.66 and 0.0735 instead of 0.09 and 0.007. Sweeping the observation range with those widths produces position indices 0 to 2 and velocity indices 0 to 1, so only a few cells of the 20 x 20 table are reachable. I did not run the original code under legacy Gym, so I make no claim about how well it would have trained.
+- Upper boundary: with the correct width an observation at the maximum maps to index n_bins, one past the end of the table. The rewrite clips the index.
+- Terminal handling: the original ignored the difference between reaching the flag and hitting the 200-step limit, and only updated the table for the goal case in a way that depended on the reward scale. The rewrite uses Gymnasium's `terminated` and `truncated` flags.
+- Compatibility: `np.int` is gone from current NumPy, the old `reset()` and four-value `step()` are replaced in Gymnasium, and `env.goal_position` is no longer reachable through the wrapper. `env.unwrapped.goal_position` is not needed now.
 
-Syntax compilation passed, but no training run was completed. The review environment lacked Gym. The code needs the legacy four-value step result and observation-only reset; `np.int` is another compatibility constraint. No compatible environment lock exists.
+Design choices in the rewrite:
 
-There are no seeds, saved tables, return curves or independent policy evaluations. Printed training goals cannot establish held-out performance. I would evaluate a frozen policy on new seeds and report returns alongside a random baseline after correcting the implementation.
+- The Q-table is still initialised uniformly in [-2, 0] as in the original. With a reward of -1 per step this makes unvisited actions look better than visited ones, which encourages trying them.
+- Training seeds drive the Q-table initialisation, the exploration generator and the first environment reset. Evaluation uses different environment seeds, with a separate generator for the random baseline.
+- Checkpoint evaluations for the learning curve use their own seeds (20000 to 20019) so they do not overlap the final evaluation seeds.
 
-An illustration with unidentified redistribution rights was excluded. The original reference for the learning example is not recorded.
-
-The environment generates transitions; there is no dataset split to audit. Separate evaluation on new seeds is absent.
-
-The diagram follows the code as written, including the overwritten exploratory action:
-
-```mermaid
-flowchart TD
-    A[Reset MountainCar] --> B[Convert observation to table indices]
-    B --> C[Choose epsilon-greedy action]
-    C --> D[Replace action with table argmax]
-    D --> E[Step environment]
-    E --> F[Convert next observation]
-    F --> G[Update table for non-terminal transition]
-    G --> H{Episode ended?}
-    H -->|No| C
-    H -->|Yes| I[Adjust epsilon and start next episode]
-    I --> A
-```
-
-Terminal transitions have separate handling described above. The diagram shows control flow, not a verified training pipeline.
+The earlier illustration of the update rule was left out because its redistribution rights are unknown.

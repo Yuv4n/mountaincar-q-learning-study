@@ -9,3 +9,7 @@ Original timezone and exact coding times cannot be established. Author timestamp
 ## File evidence
 
 - `train.py`: 2021-08-28; hash-matched RAR last-saved date. Archive: `Coding/Q learning/Reinfrocment Learning (Q learning) Basic Model mk01 - Copy.py`.
+
+## Later changes
+
+The 2021 `train.py` described above was replaced in October 2026 by `qlearning.py`, `train.py` and `experiment.py`. Those commits carry their actual dates and the earlier import history is unchanged.
