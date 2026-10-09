@@ -10,4 +10,22 @@ There are no seeds, saved tables, return curves or independent policy evaluation
 
 An illustration with unidentified redistribution rights was excluded. The original reference for the learning example is not recorded.
 
-The current file review found one training script and no dataset, trained policy or evaluation output. There is no dataset split to inspect for leakage. Training uses the same environment as its episode loop; an independent policy evaluation is missing. This shows initial reinforcement-learning study, with no supported performance claim.
+The environment generates transitions; there is no dataset split to audit. Separate evaluation on new seeds is absent.
+
+The diagram follows the code as written, including the overwritten exploratory action:
+
+```mermaid
+flowchart TD
+    A[Reset MountainCar] --> B[Convert observation to table indices]
+    B --> C[Choose epsilon-greedy action]
+    C --> D[Replace action with table argmax]
+    D --> E[Step environment]
+    E --> F[Convert next observation]
+    F --> G[Update table for non-terminal transition]
+    G --> H{Episode ended?}
+    H -->|No| C
+    H -->|Yes| I[Adjust epsilon and start next episode]
+    I --> A
+```
+
+Terminal transitions have separate handling described above. The diagram shows control flow, not a verified training pipeline.

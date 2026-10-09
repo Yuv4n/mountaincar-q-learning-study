@@ -1,17 +1,21 @@
 # MountainCar Q-learning
 
-An early attempt at tabular Q-learning for Gym's MountainCar environment. The goal is to get the car up the hill. I mapped position and velocity into a Q-table and wrote the reward update and episode loop.
+An early tabular reinforcement-learning study using Python, Gym and NumPy. The car must build enough momentum to reach the flag. The script represents position and velocity with a 20 × 20 grid and stores three action values per state.
 
-The script is configured for 25,000 episodes and a 20 × 20 × 3 table. Those are settings, not measured results. Training has not been verified: the bin-width calculation is wrong, and a later `argmax` overrides the exploratory action. There is no saved policy or separate evaluation.
+`train.py` contains the state conversion and Q-value update inside a 25,000-episode loop. Those are configuration values. No measured training result is included.
 
-## Running the original
+## Run status
 
-`train.py` expects the old Gym reset/step interface and a NumPy version with `np.int`. The original dependency versions were not saved; `requirements.txt` only lists the imports. Current packages may be incompatible.
+Training has not been reproduced. The script expects Gym's old observation-only `reset()` and four-value `step()`, plus NumPy's removed `np.int` alias. Original package versions were not recorded; `requirements.txt` is an import list, not a verified environment lock.
+
+In a compatible legacy environment, run from this folder:
 
 ```sh
 python3 train.py
 ```
 
-It starts the full training loop immediately. I would fix binning and exploration first, then add seeded runs and evaluation against a random policy.
+It immediately starts training and periodically opens a render window. The bin-width expression is wrong. An unconditional `argmax` also replaces the random exploratory action, so the intended epsilon-greedy policy is not implemented correctly.
 
-[Technical notes](docs/notes.md) · [Recorded dates](docs/history.md)
+There are no saved policies or independent evaluation runs. The next step is to correct state conversion and exploration, then compare seeded policy returns with a random baseline.
+
+[Actual training flow and technical notes](docs/notes.md) · [Source dates](docs/history.md)
