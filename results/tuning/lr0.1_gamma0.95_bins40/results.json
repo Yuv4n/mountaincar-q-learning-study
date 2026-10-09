@@ -1,0 +1,74 @@
+{
+  "description": "Validation run for tuning only: lr0.1_gamma0.95_bins40. Not a reported result.",
+  "config": {
+    "description": "Validation run for tuning only: lr0.1_gamma0.95_bins40. Not a reported result.",
+    "train_seeds": {
+      "start": 100,
+      "count": 3
+    },
+    "eval_seeds": {
+      "start": 5000,
+      "count": 100
+    },
+    "random_policy_seed": 0,
+    "hyperparameters": {
+      "n_bins": 40,
+      "episodes": 25000,
+      "learning_rate": 0.1,
+      "discount": 0.95,
+      "epsilon_start": 1.0,
+      "epsilon_end": 0.0,
+      "epsilon_decay_fraction": 0.5,
+      "q_init_low": -2.0,
+      "q_init_high": 0.0,
+      "curve_eval_every": 0,
+      "curve_eval_episodes": 20,
+      "curve_eval_seed_start": 20000
+    }
+  },
+  "evaluation_seeds": {
+    "start": 5000,
+    "end": 5099,
+    "episodes": 100
+  },
+  "greedy_per_seed": [
+    {
+      "train_seed": 100,
+      "success_rate": 0.99,
+      "mean_return": -137.46,
+      "mean_steps": 137.46,
+      "train_seconds": 65.0
+    },
+    {
+      "train_seed": 101,
+      "success_rate": 1.0,
+      "mean_return": -135.59,
+      "mean_steps": 135.59,
+      "train_seconds": 64.0
+    },
+    {
+      "train_seed": 102,
+      "success_rate": 0.86,
+      "mean_return": -151.62,
+      "mean_steps": 151.62,
+      "train_seconds": 64.3
+    }
+  ],
+  "greedy_across_seeds": {
+    "success_rate": {
+      "mean": 0.9500000000000001,
+      "std": 0.07810249675906655
+    },
+    "mean_return": {
+      "mean": -141.55666666666667,
+      "std": 8.76511456475803
+    }
+  },
+  "random_baseline": {
+    "episodes": 100,
+    "success_rate": 0.0,
+    "mean_return": -200.0,
+    "mean_steps": 200.0
+  },
+  "std_note": "sample standard deviation (ddof=1) across training seeds"
+}
