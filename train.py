@@ -1,111 +1,77 @@
-#Objective is to get cart to flag
-#Initially Just move Randomly
-import gym
+"""Train one Q-learning agent on MountainCar-v0 and optionally evaluate it.
+
+Example:
+    python train.py --seed 0 --out runs/single
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+from typing import List, Optional
+
 import numpy as np
 
-env = gym.make("MountainCar-v0")
-#Constants
-LEARNING_RATE = 0.1
-DISCOUNT = 0.95
-EPISODES = 25000
+import qlearning as ql
 
 
-#Every 2000 loops shows programme is still running
-SHOW_EVERY = 2000
+def build_parser() -> argparse.ArgumentParser:
+    d = ql.Config()
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    p.add_argument("--seed", type=int, default=0, help="seed for Q-table init, exploration and the training env (default: 0)")
+    p.add_argument("--episodes", type=int, default=d.episodes, help="training episodes (default: %(default)s)")
+    p.add_argument("--n-bins", type=int, default=d.n_bins, help="bins per observation dimension (default: %(default)s)")
+    p.add_argument("--learning-rate", type=float, default=d.learning_rate, help="Q-learning step size alpha (default: %(default)s)")
+    p.add_argument("--discount", type=float, default=d.discount, help="discount factor gamma (default: %(default)s)")
+    p.add_argument("--epsilon-start", type=float, default=d.epsilon_start, help="initial exploration rate (default: %(default)s)")
+    p.add_argument("--epsilon-end", type=float, default=d.epsilon_end, help="final exploration rate (default: %(default)s)")
+    p.add_argument("--epsilon-decay-fraction", type=float, default=d.epsilon_decay_fraction,
+                   help="fraction of episodes over which epsilon decays linearly (default: %(default)s)")
+    p.add_argument("--q-init-low", type=float, default=d.q_init_low, help="lower bound of the random Q init (default: %(default)s)")
+    p.add_argument("--q-init-high", type=float, default=d.q_init_high, help="upper bound of the random Q init (default: %(default)s)")
+    p.add_argument("--curve-eval-every", type=int, default=d.curve_eval_every,
+                   help="greedy checkpoint evaluation interval in episodes, 0 to disable (default: %(default)s)")
+    p.add_argument("--eval-episodes", type=int, default=100, help="greedy evaluation episodes after training (default: %(default)s)")
+    p.add_argument("--eval-seed-start", type=int, default=10000,
+                   help="first environment seed of the final evaluation (default: %(default)s)")
+    p.add_argument("--render-every", type=int, default=0,
+                   help="open a render window every N training episodes, 0 for headless (default: 0)")
+    p.add_argument("--out", default=None, help="directory for q_table.npy and result.json (default: do not save)")
+    return p
 
 
-#You might not know the Environment's Variables
-#You will almost always know these actions
-
-#New State value can be anything (Position and Velocity)
-#New states given as continuous values (Too much storage to create table
-#Convert New State value from Continuous Data to Discrete Data
-
-#Dont hard code this as some environments have over 2 observational values
-#20 (x) is number of chunks/groups, the Q learning table's number of dimensions is dependant on the variables in the environment
-#Getting the value for x can take hundreds of trial and error attempts
-DISCRETE_OS_SIZE = [20] * len(env.observation_space.high)
-discrete_os_win_size = (env.observation_space.high) - (env.observation_space.low) / DISCRETE_OS_SIZE
-
-#Epsilon is the amount of randomness from 0-1, 1 being the most random
-# Exploration settings
-epsilon = 1  # not a constant, qoing to be decayed
-START_EPSILON_DECAYING = 1
-#// always gives an integer
-END_EPSILON_DECAYING =  EPISODES // 2
-
-epsilon_decay_value = epsilon/(END_EPSILON_DECAYING - START_EPSILON_DECAYING)
-
-#Low and High change between each programmes action and its correlating reward
-#Creating the randomized Q table
-q_table = np.random.uniform(low = -2, high = 0, size=(DISCRETE_OS_SIZE + [env.action_space.n]))
-
-def get_discrete_state(state):
-    discrete_state = (state - env.observation_space.low) / discrete_os_win_size
-    return tuple(discrete_state.astype(np.int))  # we use this tuple to look up the 3 Q values for the available actions in the q-table
+def config_from_args(args: argparse.Namespace) -> ql.Config:
+    return ql.Config(
+        n_bins=args.n_bins, episodes=args.episodes, learning_rate=args.learning_rate,
+        discount=args.discount, epsilon_start=args.epsilon_start, epsilon_end=args.epsilon_end,
+        epsilon_decay_fraction=args.epsilon_decay_fraction, q_init_low=args.q_init_low,
+        q_init_high=args.q_init_high, curve_eval_every=args.curve_eval_every)
 
 
+def main(argv: Optional[List[str]] = None) -> None:
+    args = build_parser().parse_args(argv)
+    cfg = config_from_args(args)
 
-for episode in range(EPISODES):
+    def progress(ep, info):
+        print(f"episode {ep:6d}  epsilon {info['epsilon']:.3f}  "
+              f"train success (last 500) {info['train_success']:.3f}  greedy success {info['greedy_success']:.2f}")
 
-    # If we can divide episodes by SHOW_EVERY without a remainder (mod)
-    if episode % SHOW_EVERY == 0:
-        print(episode)
-        render = True
-    else:
-        render = False
+    q, _ = ql.train(cfg, args.seed, render_every=args.render_every, progress=progress)
+    eval_seeds = [args.eval_seed_start + i for i in range(args.eval_episodes)]
+    greedy = ql.evaluate(q, cfg.n_bins, eval_seeds)
+    random_policy = ql.evaluate_random(eval_seeds)
+    print(f"greedy policy: success {greedy['success_rate']:.2f}, mean return {greedy['mean_return']:.1f}")
+    print(f"random policy: success {random_policy['success_rate']:.2f}, mean return {random_policy['mean_return']:.1f}")
 
-
-
-    discrete_state = get_discrete_state(env.reset())
-    done = False
-    while not done:
-
-
-        if np.random.random() > epsilon:
-            # Get action from Q table
-            action = np.argmax(q_table[discrete_state])
-        else:
-            # Get random action
-            action = np.random.randint(0, env.action_space.n)
-
-        action = np.argmax(q_table[discrete_state])
-        new_state, reward, done, _ = env.step(action)
-
-        new_discrete_state = get_discrete_state(new_state)
-
-        if render:
-            env.render()
-        #new_q = (1 - LEARNING_RATE) * current_q + LEARNING_RATE * (reward + DISCOUNT * max_future_q)
-
-        # If simulation did not end yet after last step - update Q table
-        if not done:
-
-            # Maximum possible Q value in next step (for new state)
-            max_future_q = np.max(q_table[new_discrete_state])
-
-            # Current Q value (for current state and performed action)
-            current_q = q_table[discrete_state + (action,)]
-
-            # And here's our equation for a new Q value for current state and action
-            new_q = (1 - LEARNING_RATE) * current_q + LEARNING_RATE * (reward + DISCOUNT * max_future_q)
-
-            # Update Q table with new Q value
-            q_table[discrete_state + (action,)] = new_q
+    if args.out:
+        os.makedirs(args.out, exist_ok=True)
+        np.save(os.path.join(args.out, "q_table.npy"), q)
+        with open(os.path.join(args.out, "result.json"), "w") as f:
+            json.dump({"seed": args.seed, "config": cfg.to_dict(), "eval_seeds": [eval_seeds[0], eval_seeds[-1]],
+                       "greedy": {k: v for k, v in greedy.items() if k not in ("returns", "successes")},
+                       "random": {k: v for k, v in random_policy.items() if k not in ("returns", "successes")}},
+                      f, indent=2)
 
 
-        # Simulation ended (for any reson) - if goal position is achived - update Q value with reward directly
-        elif new_state[0] >= env.goal_position:
-            #To track how many episodes it took to complete the track
-            #F string print is just beautifull code
-            print(f"We made it on episode {episode}")
-            #q_table[discrete_state + (action,)] = reward
-            q_table[discrete_state + (action,)] = 0
-
-        discrete_state = new_discrete_state
-
-    # Decaying is being done every episode if episode number is within decaying range
-    if END_EPSILON_DECAYING >= episode >= START_EPSILON_DECAYING:
-        epsilon -= epsilon_decay_value
-
-env.close()
+if __name__ == "__main__":
+    main()
