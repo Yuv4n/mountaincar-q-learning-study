@@ -84,9 +84,9 @@ def _grid(env, n_bins):
     return low, bin_widths(low, high, n_bins)
 
 
-def evaluate(q, n_bins: int, seeds: List[int], render: bool = False) -> Dict:
+def evaluate(q, n_bins: int, seeds: List[int]) -> Dict:
     """Run the frozen greedy policy once per seed. The Q-table is never modified."""
-    env = gym.make(ENV_ID, render_mode="human" if render else None)
+    env = gym.make(ENV_ID)
     low, width = _grid(env, n_bins)
     returns, steps, successes = [], [], []
     for seed in seeds:
