@@ -31,9 +31,14 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--q-init-high", type=float, default=d.q_init_high, help="upper bound of the random Q init (default: %(default)s)")
     p.add_argument("--curve-eval-every", type=int, default=d.curve_eval_every,
                    help="greedy checkpoint evaluation interval in episodes, 0 to disable (default: %(default)s)")
+    p.add_argument("--curve-eval-episodes", type=int, default=d.curve_eval_episodes,
+                   help="episodes per greedy checkpoint evaluation (default: %(default)s)")
+    p.add_argument("--curve-eval-seed-start", type=int, default=d.curve_eval_seed_start,
+                   help="first environment seed of the checkpoint evaluations (default: %(default)s)")
     p.add_argument("--eval-episodes", type=int, default=100, help="greedy evaluation episodes after training (default: %(default)s)")
-    p.add_argument("--eval-seed-start", type=int, default=10000,
-                   help="first environment seed of the final evaluation (default: %(default)s)")
+    p.add_argument("--eval-seed-start", type=int, default=50000,
+                   help="first environment seed of the post-training evaluation. The default is a scratch range; "
+                        "the reported results use 10000 to 10199, so avoid that range when exploring (default: %(default)s)")
     p.add_argument("--render-every", type=int, default=0,
                    help="open a render window every N training episodes, 0 for headless (default: 0)")
     p.add_argument("--out", default=None, help="directory for q_table.npy and result.json (default: do not save)")
@@ -45,7 +50,8 @@ def config_from_args(args: argparse.Namespace) -> ql.Config:
         n_bins=args.n_bins, episodes=args.episodes, learning_rate=args.learning_rate,
         discount=args.discount, epsilon_start=args.epsilon_start, epsilon_end=args.epsilon_end,
         epsilon_decay_fraction=args.epsilon_decay_fraction, q_init_low=args.q_init_low,
-        q_init_high=args.q_init_high, curve_eval_every=args.curve_eval_every)
+        q_init_high=args.q_init_high, curve_eval_every=args.curve_eval_every,
+        curve_eval_episodes=args.curve_eval_episodes, curve_eval_seed_start=args.curve_eval_seed_start)
 
 
 def main(argv: Optional[List[str]] = None) -> None:
