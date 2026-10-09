@@ -34,11 +34,11 @@ The left panel is measured during training, while the agent is still exploring w
 - Gymnasium's `terminated` and `truncated` flags are handled separately. The 200-step time limit is not a real end of the task, so a truncated step still bootstraps from the next state. A step that reaches the flag uses the observed reward with no future term.
 - Exploration is epsilon-greedy with epsilon falling linearly from 1 to 0 over the first half of training.
 - Training is headless. `--render-every N` opens a window every N episodes. I checked this with a visible macOS window (SDL cocoa driver, 600 by 400): two render episodes drew 402 frames, and the Q-table is identical to a headless run (covered by a test).
-- The two defects of the original script (the bin-width expression and the overwritten exploratory action) can be switched back on, so their effect is measured in [docs/ablation.md](docs/ablation.md). With the original bin-width error the agent reached the goal in 0 of 1,000 evaluation episodes. With only the overwritten action it still learned, because the optimistic Q-table initialisation drives enough exploration.
+- The two defects of the original script (the bin-width expression and the overwritten exploratory action) can be switched back on, so their effect is measured in [docs/ablation.md](docs/ablation.md). With the original bin-width error the agent reached the goal in 0 of 1,000 evaluation episodes, and the unmodified 2021 script run under legacy Gym (`scripts/run_original_2021.py`) never reached it in 5 seeds of 25,000 training episodes. With only the overwritten action it still learned, because the optimistic Q-table initialisation drives enough exploration.
 - Hyperparameters were compared on separate validation seeds before the final run. The table and selection rule are in [docs/tuning.md](docs/tuning.md).
 - `tests/` covers bin boundaries and clipping, action selection, the epsilon schedule, terminal versus truncated updates, and that evaluation leaves the table unchanged.
 
-The original script and what was checked in it are described in [docs/notes.md](docs/notes.md).
+The original script and what was checked in it are described in [docs/notes.md](docs/notes.md). `legacy/original_train.py` keeps it verbatim.
 
 ## Setup and reproduction
 

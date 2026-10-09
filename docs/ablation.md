@@ -13,6 +13,12 @@ All runs use the original hyperparameters (learning rate 0.1, discount 0.95, 20 
 
 The bin-width error alone was enough to stop learning in this setup: the greedy policies reached the goal in none of the 1,000 evaluation episodes. Restoring the overwritten action did not hurt. The Q-table starts uniformly in [-2, 0] and every step costs -1, so untried actions keep looking better than tried ones and a purely greedy agent still ends up visiting most of the table. The two corrected-code figures differ by less than the seed-to-seed spread, so there is no evidence here that epsilon-greedy helps on this task.
 
-The "both defects" variant is the original behaviour apart from the Gymnasium interface and the corrected terminal and truncation handling. I did not run the unmodified 2021 script under legacy Gym.
+The "both defects" variant is the original behaviour apart from the Gymnasium interface and the corrected terminal and truncation handling.
+
+## The unmodified 2021 script
+
+`legacy/original_train.py` is byte-identical to the script in the earlier history. `scripts/run_original_2021.py` runs it as written under Gym 0.25.2 and NumPy 1.23.5 (Python 3.9, `requirements-legacy.txt`). The wrapper only seeds NumPy and the environment beforehand, counts the script's own "We made it" messages, and afterwards replays the script's Q-table with a greedy policy on 200 held-out seeds (10000 to 10199, set through Gym 0.25's `env.seed`, so the start states are not the same draws as in the Gymnasium runs). Rendering ran against a dummy video driver.
+
+For seeds 0 to 4 (`results/legacy/`), the script reached the flag in none of its 25,000 training episodes, and each greedy policy reached it in none of 200 evaluation episodes. That agrees with the bin-width ablation above. Gym 0.25.2 is the newest release that still has the old `reset` and four-value `step`, so a different 2021-era release could behave differently, but I have not tested one.
 
 The corrected code with the original hyperparameters reaches the goal as reliably as the final configuration but about 9 steps slower on average (-135.0 against -126.2). Those two runs share seeds, but the comparison is five seeds on each side and the final configuration was chosen on separate validation seeds.
