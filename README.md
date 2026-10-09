@@ -22,7 +22,7 @@ The standard deviation is the sample standard deviation over the five training s
 
 ![Learning curve](results/final/learning_curve.png)
 
-The left panel is measured during training, while the agent is still exploring with a decaying epsilon, so it mixes learning progress with the exploration schedule. The right panel is separate: every 500 episodes the current greedy policy is run for 20 episodes on seeds 20000 to 20019 with no exploration and no updates. Success in both panels starts to rise around episode 5,000 and the greedy policy is reliable on the checkpoint seeds after about episode 18,000. These evaluations share MountainCar's fixed start-state distribution with training, so they show that the policy handles unseen start positions of the same task, not other environments.
+The left panel is measured during training, while the agent is still exploring with a decaying epsilon, so it mixes learning progress with the exploration schedule. The right panel is separate: every 500 episodes the current greedy policy is run for 20 episodes on seeds 20000 to 20019 with no exploration and no updates. Success in both panels starts to rise around episode 5,000 and the greedy policy is reliable on the checkpoint seeds from about episode 18,500. These evaluations share MountainCar's fixed start-state distribution with training, so they show that the policy handles unseen start positions of the same task, not other environments.
 
 ## What the code does
 
