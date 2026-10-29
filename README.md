@@ -25,7 +25,7 @@ Tabular Q-learning (no neural network) that learns to solve Gymnasium's `Mountai
 - **Held-out evaluation:** training, tuning and final evaluation use disjoint seeds, with the Q-table frozen during evaluation.
 - **Tuning:** 8 settings on 3 validation seeds, selection rule fixed in advance ([docs/tuning.md](docs/tuning.md)).
 - **Uncertainty:** 95% Wilson intervals per seed, mean ± std across seeds, baselines on identical seeds.
-- **Reproducible:** pinned dependencies, saved configs and Q-tables.
+- **Reproducible:** pinned dependencies, saved configs and Q-tables, identical results on Python 3.9 and 3.12 (tested on macOS).
 
 ## How it works
 
@@ -51,6 +51,8 @@ python train.py --seed 0 --out runs/seed0                 # train one agent (~75
 python experiment.py --config configs/final.json --out results/final   # full 5-seed experiment
 ```
 
+
+`qlearning.py` holds the core logic and `tests/` covers bin boundaries, action selection, terminal vs truncated updates and frozen evaluation. `legacy/` keeps the 2021 script; `train.py --render-every N` opens a window every N episodes.
 
 ## Limits
 
