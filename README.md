@@ -21,11 +21,11 @@ Tabular Q-learning (no neural network) that learns to solve Gymnasium's `Mountai
 
 ## Approach
 
-- **Clean separation of concerns:** discretisation, action selection, the Q-update, training and evaluation are separate functions with 20 unit tests, run in CI on Python 3.9 and 3.12.
-- **Held-out evaluation:** training, tuning and final evaluation use disjoint seeds, and the Q-table is frozen during evaluation.
-- **Light hyperparameter study:** 8 settings, 3 validation seeds, with the selection rule fixed in advance. See [docs/tuning.md](docs/tuning.md).
-- **Results with uncertainty:** 95% Wilson intervals per seed, mean ± std across seeds, and baselines run on identical evaluation seeds.
-- **Reproducible:** pinned dependencies, saved configs and Q-tables, and identical results across Python 3.9 and 3.12.
+- **Tested:** discretisation, action selection, the Q-update, training and evaluation are separate functions with 20 unit tests, run in CI on Python 3.9 and 3.12.
+- **Held-out evaluation:** training, tuning and final evaluation use disjoint seeds, with the Q-table frozen during evaluation.
+- **Tuning:** 8 settings on 3 validation seeds, selection rule fixed in advance ([docs/tuning.md](docs/tuning.md)).
+- **Uncertainty:** 95% Wilson intervals per seed, mean ± std across seeds, baselines on identical seeds.
+- **Reproducible:** pinned dependencies, saved configs and Q-tables.
 
 ## How it works
 
@@ -51,18 +51,6 @@ python train.py --seed 0 --out runs/seed0                 # train one agent (~75
 python experiment.py --config configs/final.json --out results/final   # full 5-seed experiment
 ```
 
-`train.py --render-every N` opens a window every N episodes. The pinned versions were tested on Python 3.9.6 and 3.12 on macOS.
-
-## Repository map
-
-| Path | Purpose |
-|---|---|
-| `qlearning.py` | Discretisation, epsilon-greedy, Q-update, training, evaluation |
-| `train.py` / `experiment.py` | Single run / multi-seed experiment with plots |
-| `tests/` | Unit tests: bin boundaries, action selection, terminal vs truncated updates, frozen evaluation |
-| `configs/`, `results/` | Experiment configs and saved outputs, including Q-tables |
-| `docs/` | Tuning study and supporting notes |
-| `legacy/` | Earlier 2021 version of the script, kept for reference |
 
 ## Limits
 
